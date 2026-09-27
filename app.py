@@ -23,3 +23,17 @@ def ffmpeg():
   v=subprocess.check_output(["ffmpeg","-version"],text=True,timeout=10).splitlines()[0]
   return jsonify(ok=True,version=v)
  except Exception as e:return jsonify(ok=False,error=str(e)),500
+
+def startup_probe():
+ print("STARTUP_PROBE_BEGIN", flush=True)
+ try:
+  v=subprocess.check_output(["ffmpeg","-version"],text=True,timeout=10).splitlines()[0]
+  print("FFMPEG_OK "+v, flush=True)
+ except Exception as e: print("FFMPEG_FAIL "+str(e), flush=True)
+ for i,u in enumerate(KNOWN,1):
+  try:
+   r=requests.get(u,timeout=30)
+   print(f"CLIP_{i} status={r.status_code} bytes={len(r.content)}", flush=True)
+  except Exception as e: print(f"CLIP_{i}_FAIL {e}", flush=True)
+ print("STARTUP_PROBE_END", flush=True)
+startup_probe()

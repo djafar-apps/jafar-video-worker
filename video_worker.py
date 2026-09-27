@@ -54,3 +54,5 @@ with open("concat.txt","w") as f:
 subprocess.check_call(["ffmpeg","-y","-f","concat","-safe","0","-i","concat.txt","-c","copy","-movflags","+faststart","output/final.mp4"])
 final=dur("output/final.mp4");print("FINAL_DURATION",final,flush=True)
 if final<60:raise SystemExit("Final under 60")
+
+# run-trigger-2026-09-27

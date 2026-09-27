@@ -1,0 +1,32 @@
+name: Build 60s AI Video
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - video_worker.py
+      - .github/workflows/build-video.yml
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: pip install requests
+      - name: Generate and stitch real AI video
+        run: python video_worker.py
+      - name: Upload result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jafar-ai-video
+          path: |
+            output/final.mp4
+            output/report.json
+            output/segments/*.mp4
+          if-no-files-found: warn
